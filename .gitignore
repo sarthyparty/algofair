@@ -4,3 +4,7 @@ preprocessed.csv
 subgroup_data_with_demographics.csv
 protected.csv
 .venv/
+subgroup_data_without_demographics.csv
+preprocessed_female.csv
+subgroup_data_with_demographics_female.csv
+subgroup_data_without_demographics_female.csv
