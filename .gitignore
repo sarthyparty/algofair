@@ -10,3 +10,5 @@ subgroup_data_with_demographics_female.csv
 subgroup_data_without_demographics_female.csv
 subgroup_data_with_demographics.csv
 subgroup_data_without_demographics.csv
+*.csv
+functions/__pycache__/
