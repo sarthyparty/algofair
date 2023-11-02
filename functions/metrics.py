@@ -41,6 +41,8 @@ def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, is
         y_train, y_test = y[train_index], y[test_index]
         X_prime_train, X_prime_test = X_prime[train_index], X_prime[test_index]
 
+        
+
         if subgroups:
             conditions = np.array([(X_test[:, name] == val) for name, val in col_subgroups]).all(axis=0)
             X_test = X_test[conditions]
@@ -54,16 +56,21 @@ def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, is
             X_test = np.delete(X_test, to_drop, axis=1)
 
         model = None
+        res = None
         if is_gerryfair:
             X_train_df = pd.DataFrame(X_train, columns=X_cols)
             X_prime_train_df = pd.DataFrame(X_prime_train, columns=X_prime_cols)
             y_train_df = pd.Series(y_train)
 
+            X_test_df = pd.DataFrame(X_test, columns=X_cols)
+
             model = gerryfair_model(X_train_df, X_prime_train_df, y_train_df)
+            res = calc_metric(model, X_test_df, y_test, True)
         else:
             model = logr_model(X_train, y_train)
+            res = calc_metric(model, X_test, y_test, False)
         
-        res = calc_metric(model, X_test, y_test, is_gerryfair)
+        
         if res == None:
             continue
 
@@ -91,10 +98,12 @@ def calc_metric(model, X_test, y_test, is_gerryfair):
         y_pred = model.predict(X_test)
         if is_gerryfair:
             y_pred = (y_pred.values >= 0.5).astype(int)
+        print(y_pred)
         auc = roc_auc_score(y_test, y_pred)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
     except Exception:
+        print('error')
         return None
     
     TN = np.sum((y_test == 0) & (y_pred == 0))

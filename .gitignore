@@ -12,3 +12,4 @@ subgroup_data_with_demographics.csv
 subgroup_data_without_demographics.csv
 *.csv
 functions/__pycache__/
+old/*
