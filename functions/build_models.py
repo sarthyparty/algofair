@@ -1,6 +1,6 @@
 import warnings
 from sklearn.linear_model import LogisticRegression
-import gerryfair.gerryfair
+import gerryfair
 
 def gerryfair_model(X_train, X_prime_train, y_train):
     warnings.filterwarnings("ignore", category=UserWarning)
@@ -9,7 +9,7 @@ def gerryfair_model(X_train, X_prime_train, y_train):
     printflag = True
     gamma = .01
     fair_model = gerryfair.model.Model(C=C, printflag=printflag, gamma=gamma)
-    max_iters = 50
+    max_iters = 5
     fair_model.set_options(max_iters=max_iters)
 
     # Train the model

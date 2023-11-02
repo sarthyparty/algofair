@@ -1,9 +1,12 @@
 from sklearn.metrics import roc_auc_score, mean_squared_error
 import numpy as np
+import pandas as pd
+import gerryfair
 from functions.build_models import gerryfair_model, logr_model
 from sklearn.model_selection import KFold
+import functions.generate_preprocessed as generate_preprocessed
 
-def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, gerryfair = False):
+def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, is_gerryfair = False):
     col_subgroups = subgroups.copy()
 
     kfold = KFold(n_splits=10, shuffle=True, random_state=42)
@@ -23,8 +26,12 @@ def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, ge
     fprs = []
     rmses = []
 
-    y = np.array(y)
-    X = np.array(X)
+    # dataset, attributes = generate_preprocessed.create_attributes(X, y, demographics)
+    # X, X_prime, y = gerryfair.clean.clean_dataset(dataset, attributes, False)
+    X_prime = X.loc[:, demographics]
+
+    X_cols, X_prime_cols = X.columns, X_prime.columns
+    X, X_prime, y = np.array(X), np.array(X_prime), np.array(y) 
 
     subgroup_size = 0
     count = 0
@@ -32,29 +39,31 @@ def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, ge
     for train_index, test_index in kfold.split(X):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
+        X_prime_train, X_prime_test = X_prime[train_index], X_prime[test_index]
+
         if subgroups:
             conditions = np.array([(X_test[:, name] == val) for name, val in col_subgroups]).all(axis=0)
             X_test = X_test[conditions]
             y_test = y_test[conditions]
 
-        X_prime = X_train[[i[0] for i in col_subgroups]]
-
         subgroup_size += X_test.shape[0]
         count+=1
 
-        if omit_demographics:
-            X_train = np.delete(X_train, to_drop, axis=1)                
-        
-        if omit_demographics:
+        if omit_demographics and not is_gerryfair:
+            X_train = np.delete(X_train, to_drop, axis=1)    
             X_test = np.delete(X_test, to_drop, axis=1)
 
         model = None
-        if gerryfair:
-            model = gerryfair_model(X_train, X_prime, y_train)
+        if is_gerryfair:
+            X_train_df = pd.DataFrame(X_train, columns=X_cols)
+            X_prime_train_df = pd.DataFrame(X_prime_train, columns=X_prime_cols)
+            y_train_df = pd.Series(y_train)
+
+            model = gerryfair_model(X_train_df, X_prime_train_df, y_train_df)
         else:
             model = logr_model(X_train, y_train)
         
-        res = calc_metric(model, X_test, y_test)
+        res = calc_metric(model, X_test, y_test, is_gerryfair)
         if res == None:
             continue
 
@@ -74,12 +83,14 @@ def calc_metrics(X, y, subgroups, demographics=None, omit_demographics=False, ge
     # print(f"FPR: {fpr_avg} +/- {fpr_std}")
     return (auc_avg, auc_std, fpr_avg, fpr_std, rmse_avg, rmse_std, subgroup_size/count)
 
-def calc_metric(model, X_test, y_test):
+def calc_metric(model, X_test, y_test, is_gerryfair):
     auc = None
     rmse = None
     y_pred = None
     try:
         y_pred = model.predict(X_test)
+        if is_gerryfair:
+            y_pred = (y_pred.values >= 0.5).astype(int)
         auc = roc_auc_score(y_test, y_pred)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
