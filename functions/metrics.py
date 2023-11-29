@@ -6,7 +6,7 @@ from functions.build_models import gerryfair_model, logr_model
 from sklearn.model_selection import StratifiedKFold
 from functions.formatting import get_indices, get_subgroup_str
 
-def calc_metrics(X, y, subgroups_dict, demographics, omit_demographics=False, is_gerryfair = False):
+def calc_metrics(X, y, subgroups_dict, demographics, omit_demographics=False, is_gerryfair = False, iters=5, gamma=.01):
     kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     subgroups, names = get_indices(subgroups_dict, X)
@@ -46,7 +46,7 @@ def calc_metrics(X, y, subgroups_dict, demographics, omit_demographics=False, is
             X_prime_train_df = pd.DataFrame(X_prime_train, columns=X_prime_cols)
             y_train_df = pd.Series(y_train)
 
-            model = gerryfair_model(X_train_df, X_prime_train_df, y_train_df)
+            model = gerryfair_model(X_train_df, X_prime_train_df, y_train_df, iters, gamma)
         else:
             model = logr_model(X_train, y_train)
         
@@ -109,21 +109,20 @@ def calc_metric(model, X_test, y_test, is_gerryfair):
         y_pred = np.array(model.predict(X_test))
         if is_gerryfair:
             y_pred = y_pred.ravel()
-        # if is_gerryfair:
-        #     print(y_pred)
-        #     y_pred = (y_pred.values >= 0.5).astype(int)
+            y_pred = (y_pred >= 0.5).astype(int)
+
         auc = roc_auc_score(y_test, y_pred)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
     except Exception:
-        print('error')
+        # print('error')
         return None
     y_test = np.array(y_test)
     TN = np.sum((y_test == 0) & (y_pred == 0))
     FP = np.sum((y_test == 0) & (y_pred == 1))      
     FPR = FP / (FP + TN)
 
-    print(y_test, y_pred, FPR)
+    # print(y_test, y_pred, FPR)
 
     return auc, FPR, rmse
 
