@@ -1,15 +1,8 @@
 def get_subgroup_str(attrs):
     subgroup = []
     if attrs:
-        for col, val in attrs:
-            if col == 'country_cd_US':
-                subgroup.append("US" if val == 1 else "International")
-            elif col == 'is_female':
-                subgroup.append("Female" if val == 1 else "Male/Other")
-            elif col == 'bachelor_obtained':
-                subgroup.append("Bachelor or higher" if val == 1 else "No Bachelor")
-            else:
-                subgroup.append(col)
+        for col in attrs:
+            subgroup.append(col)
     else:
         subgroup.append("Overall")
 

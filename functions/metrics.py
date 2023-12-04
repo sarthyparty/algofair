@@ -6,21 +6,17 @@ from functions.build_models import gerryfair_model, logr_model
 from sklearn.model_selection import StratifiedKFold
 from functions.formatting import get_indices, get_subgroup_str
 
-def calc_metrics(X: pd.DataFrame, y, subgroups_dict, demographics, protected, omit_demographics=False, is_gerryfair = False, iters=5, gamma=.01):
+def calc_metrics(X: pd.DataFrame, y, subgroup_names, demographics, protected, omit_demographics=False, is_gerryfair = False, iters=5, gamma=.01):
     kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-    subgroups, names = get_indices(subgroups_dict, X)
-    # subgroups = subgroups[:5]
-    # names = names[:5]
 
     to_drop = []
 
     for d in demographics:
         to_drop.append(X.columns.get_loc(d))
 
-    aucs = [[] for _ in subgroups]
-    fprs = [[] for _ in subgroups]
-    rmses = [[] for _ in subgroups]
+    aucs = [[] for _ in subgroup_names]
+    fprs = [[] for _ in subgroup_names]
+    rmses = [[] for _ in subgroup_names]
 
     # dataset, attributes = generate_preprocessed.create_attributes(X, y, demographics)
     # X, X_prime, y = gerryfair.clean.clean_dataset(dataset, attributes, False)
@@ -29,18 +25,28 @@ def calc_metrics(X: pd.DataFrame, y, subgroups_dict, demographics, protected, om
     if omit_demographics:
         X.drop(demographics, axis=1)
 
+    subgroups = []
+
+    for sg in subgroup_names:
+        inds = []
+        for n in sg:
+            inds.append(X_protected.columns.get_loc(n))
+        subgroups.append(inds)
+
     X_cols, X_prime_cols = X.columns, X_prime.columns
-    X, X_prime, y = np.array(X), np.array(X_prime), np.array(y)
+    X, X_prime, X_protected, y = np.array(X), np.array(X_prime), np.array(X_protected), np.array(y)
     
     combined_feature = np.dot(X_protected, 2 ** np.arange(X_protected.shape[1])[::-1])
 
-    subgroup_sizes = np.zeros(len(subgroups))
-    counts = np.zeros(len(subgroups))
+    subgroup_sizes = np.zeros(len(subgroup_names))
+    counts = np.zeros(len(subgroup_names))
+
     # Iterate through the each fold
     for train_index, test_index in kfold.split(X, combined_feature):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
         X_prime_train, X_prime_test = X_prime[train_index], X_prime[test_index]
+        X_protected_train, X_protected_test = X_protected[train_index], X_protected[test_index]
 
         model = None
 
@@ -57,16 +63,12 @@ def calc_metrics(X: pd.DataFrame, y, subgroups_dict, demographics, protected, om
             X_test_filtered = X_test
             y_test_filtered = y_test
             if subgroup:
-                conditions = np.array([(X_test_filtered[:, name] == val) for name, val in subgroup]).all(axis=0)
+                conditions = np.array([(X_protected_test[:, name] == 1) for name in subgroup]).all(axis=0)
                 X_test_filtered = X_test_filtered[conditions]
                 y_test_filtered = y_test_filtered[conditions]
 
             subgroup_sizes[i] += X_test_filtered.shape[0]
-            counts[i]+=1
-
-            # if omit_demographics and not is_gerryfair:
-            #     X_train = np.delete(X_train, to_drop, axis=1)    
-            #     X_test_filtered = np.delete(X_test_filtered, to_drop, axis=1)        
+            counts[i]+=1       
 
             res = None
             if is_gerryfair:
@@ -86,7 +88,7 @@ def calc_metrics(X: pd.DataFrame, y, subgroups_dict, demographics, protected, om
 
     ret = []
 
-    for i, subgroup in enumerate(names):
+    for i, subgroup in enumerate(subgroup_names):
         subgroup_data = {
             'subgroup': get_subgroup_str(subgroup),
             'n': f"{subgroup_sizes[i]/counts[i]}",
@@ -128,5 +130,4 @@ def calc_metric(model, X_test, y_test, is_gerryfair):
     # print(y_test, y_pred, FPR)
 
     return auc, FPR, rmse
-
 
