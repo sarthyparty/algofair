@@ -23,7 +23,7 @@ def calc_metrics(X: pd.DataFrame, y, subgroup_names, demographics, protected, om
     X_prime = X.loc[:, protected]
     X_protected = X.loc[:, demographics]
     if omit_demographics:
-        X.drop(demographics, axis=1)
+        X = X.drop(demographics, axis=1)
 
     subgroups = []
 
