@@ -6,7 +6,7 @@ from functions.build_models import gerryfair_model, logr_model
 from sklearn.model_selection import StratifiedKFold
 from functions.formatting import get_indices, get_subgroup_str
 
-def calc_metrics(X, y, subgroups_dict, demographics, omit_demographics=False, is_gerryfair = False, iters=5, gamma=.01):
+def calc_metrics(X: pd.DataFrame, y, subgroups_dict, demographics, protected, omit_demographics=False, is_gerryfair = False, iters=5, gamma=.01):
     kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     subgroups, names = get_indices(subgroups_dict, X)
@@ -24,12 +24,15 @@ def calc_metrics(X, y, subgroups_dict, demographics, omit_demographics=False, is
 
     # dataset, attributes = generate_preprocessed.create_attributes(X, y, demographics)
     # X, X_prime, y = gerryfair.clean.clean_dataset(dataset, attributes, False)
-    X_prime = X.loc[:, demographics]
+    X_prime = X.loc[:, protected]
+    X_protected = X.loc[:, demographics]
+    if omit_demographics:
+        X.drop(demographics, axis=1)
 
     X_cols, X_prime_cols = X.columns, X_prime.columns
     X, X_prime, y = np.array(X), np.array(X_prime), np.array(y)
     
-    combined_feature = np.dot(X_prime, 2 ** np.arange(X_prime.shape[1])[::-1])
+    combined_feature = np.dot(X_protected, 2 ** np.arange(X_protected.shape[1])[::-1])
 
     subgroup_sizes = np.zeros(len(subgroups))
     counts = np.zeros(len(subgroups))
