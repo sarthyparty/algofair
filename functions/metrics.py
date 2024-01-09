@@ -114,9 +114,9 @@ def calc_metric(model, X_test, y_test, is_gerryfair):
         y_pred = np.array(model.predict(X_test))
         if is_gerryfair:
             y_pred = y_pred.ravel()
-            y_pred = (y_pred >= 0.5).astype(int)
 
         auc = roc_auc_score(y_test, y_pred)
+        y_pred = (y_pred >= 0.5).astype(int)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
     except Exception:
