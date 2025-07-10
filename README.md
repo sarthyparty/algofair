@@ -13,7 +13,7 @@ Generates all publication-ready figures and statistical analysis in the `outputs
 ## 📊 Generated Figures
 
 ### **Figure 1: FPR Bias Analysis** 
-**Significance**: Reveals systematic bias against male students (-0.155 FPR difference), with minimal location-based bias.
+**Significance**: Reveals males are privileged over females (-0.155 FPR difference), with minimal location-based bias.
 
 ### **Figure 2: Group Protection During Training**
 **Significance**: Shows GerryFair learns to prioritize Female-Urban students (65% protection) over Male-Rural students (8%), indicating intersectional vulnerabilities.
@@ -43,3 +43,5 @@ Generates all publication-ready figures and statistical analysis in the `outputs
 ├── functions/ & gerryfair/       # Core code
 └── archive/                      # Old experiments (git ignored)
 ```
+
+**Ready for publication** - all figures meet research paper standards (300 DPI, professional styling).
