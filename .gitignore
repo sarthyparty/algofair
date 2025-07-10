@@ -1,15 +1,94 @@
-MTC508/*
-gerryfair/*
-preprocessed.csv
-MTC508_subgroup_data_with_demographics.csv
-protected.csv
-.venv/
-MTC508_subgroup_data_without_demographics.csv
-preprocessed_female.csv
-subgroup_data_with_demographics_female.csv
-subgroup_data_without_demographics_female.csv
-subgroup_data_with_demographics.csv
-subgroup_data_without_demographics.csv
-*.csv
-functions/__pycache__/
-old/*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archive directory (ignore most old experimental data)
+archive/
+# But allow a couple core archived files for reference
+!archive/old_data/metrics_comparison.csv
+!archive/old_data/statistical_significance_individual.csv
+
+# Ignore old experimental CSVs in root
+FNR_*.csv
+blackfemale_proc.csv
+llm_stats_all.csv
+res.csv
+simulation_results_fpr_dec12.csv
+test.csv
+student_dataset_selection_curves.csv
+MTC508_subgroup_data_*.csv
+
+# Ignore old plot directories
+plots/
+new_plots/
+results/
+
+# Ignore large data directories
+MTC508/
+data/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Keep essential files - DO NOT IGNORE
+!clean_data/
+!clean_data/student_data.csv
+!outputs/
+!outputs/*.png
+!outputs/*.csv
+!outputs/*.md
+!main_analysis.py
+!README.md
+!requirements.txt
+!functions/
+!gerryfair/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
