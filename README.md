@@ -43,5 +43,3 @@ Generates all publication-ready figures and statistical analysis in the `outputs
 ├── functions/ & gerryfair/       # Core code
 └── archive/                      # Old experiments (git ignored)
 ```
-
-**Ready for publication** - all figures meet research paper standards (300 DPI, professional styling).
