@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-07-14T18:46:39.503785",
+  "baseline_metrics": {
+    "training_time": 0.0025069713592529297,
+    "gender_bias": -0.15454545454545454,
+    "location_bias": 0.11671087533156499
+  },
+  "best_results": {
+    "best_gender_iter": 3,
+    "best_gender_bias": -0.15909090909090906,
+    "best_location_iter": 3,
+    "best_location_bias": 0.07427055702917773,
+    "optimal_efficiency_iter": 3
+  }
+}

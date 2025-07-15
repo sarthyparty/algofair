@@ -1,0 +1,46 @@
+{
+  "baseline_fprs": {
+    "overall": 0.6190476190476191,
+    "female": 0.5454545454545454,
+    "male": 0.7,
+    "urban": 0.6551724137931034,
+    "rural": 0.5384615384615384,
+    "female_urban": 0.5333333333333333,
+    "female_rural": 0.5714285714285714,
+    "male_urban": 0.7857142857142857,
+    "male_rural": 0.5
+  },
+  "baseline_training_time": 0.0025069713592529297,
+  "gerryfair_experiments": {
+    "3": {
+      "fprs": {
+        "overall": 0.6666666666666666,
+        "female": 0.5909090909090909,
+        "male": 0.75,
+        "urban": 0.6896551724137931,
+        "rural": 0.6153846153846154,
+        "female_urban": 0.6,
+        "female_rural": 0.5714285714285714,
+        "male_urban": 0.7857142857142857,
+        "male_rural": 0.6666666666666666
+      },
+      "training_time": 0.400158166885376,
+      "iterations": 3
+    },
+    "7": {
+      "fprs": {
+        "overall": 0.6666666666666666,
+        "female": 0.5909090909090909,
+        "male": 0.75,
+        "urban": 0.6896551724137931,
+        "rural": 0.6153846153846154,
+        "female_urban": 0.6,
+        "female_rural": 0.5714285714285714,
+        "male_urban": 0.7857142857142857,
+        "male_rural": 0.6666666666666666
+      },
+      "training_time": 1.088336706161499,
+      "iterations": 7
+    }
+  }
+}

@@ -1,45 +1,50 @@
-# Student Dataset Fairness Analysis
+# Fairness Algorithm Analysis
 
-Intersectional fairness analysis using GerryFair and baseline approaches on student performance data.
+Fast analysis of fairness algorithms with real experimental data.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-python main_analysis.py
+# Test (30 seconds)
+python run_long_experiments.py --test
+
+# Full analysis (2-3 minutes)  
+python run_long_experiments.py --long
+
+# Generate plots
+python generate_publication_figures.py
+python compare_algorithms.py
 ```
 
-Generates all publication-ready figures and statistical analysis in the `outputs/` folder.
+## Generated Plots
 
-## 📊 Generated Figures
+### Publication Ready (`outputs/publication/`)
+- **`figure1_fairness_analysis.png`** - Main bias comparison
+- **`figure2_training_dynamics.png`** - Training analysis  
+- **`performance_summary.csv`** - Complete metrics
 
-### **Figure 1: FPR Bias Analysis** 
-**Significance**: Reveals males are privileged over females (-0.155 FPR difference), with minimal location-based bias.
+### Algorithm Comparison (`outputs/comparison/`)
+- **`algorithm_comparison.png`** - Multi-algorithm comparison
+- **`algorithm_comparison_table.csv`** - Detailed metrics
 
-### **Figure 2: Group Protection During Training**
-**Significance**: Shows GerryFair learns to prioritize Female-Urban students (65% protection) over Male-Rural students (8%), indicating intersectional vulnerabilities.
+### Real Data Analysis (`outputs/`)
+- **`real_figure1_fpr_bias.png`** - FPR bias patterns
+- **`real_gerryfair_comparison.png`** - GerryFair analysis
+- **`real_convergence_analysis.png`** - Training efficiency
 
-### **Figure 3: Vulnerable Students Focus**
-**Significance**: Among failing students, Female-Urban protection reaches 80%, showing fairness interventions are critical for intersectional identities.
+## Key Results
 
-## 🔬 Dataset
+| Algorithm | Gender Bias | Location Bias | Overall FPR | Best Use Case |
+|-----------|-------------|---------------|-------------|---------------|
+| Baseline | -0.155 | 0.117 | 0.619 | Reference |
+| GerryFair (200 iters) | -0.155 | 0.228 | 0.619 | Converged to baseline |
+| AIF360 | Variable | Creates disparities | 0.400 | Urban optimization |
 
-- **Source**: Portuguese student performance (395 students)
-- **Target**: G3 final grade → binary pass/fail
-- **Protected Attributes**: Gender (Female/Male), Location (Urban/Rural), Intersectional combinations
+**Key Finding**: GerryFair converges to baseline performance at 200 iterations, showing algorithmic convergence.
 
-## 🎯 Key Findings
+## Files
 
-1. **Baseline Bias**: Males privileged over females (-0.155 FPR difference)
-2. **Intersectional Effects**: Female-Urban students need most protection
-3. **Vulnerable Focus**: Protection amplified for failing intersectional groups
-4. **Algorithm Learning**: GerryFair successfully detects vulnerable demographics
-
-## 📁 Structure
-
-```
-├── main_analysis.py              # Main script
-├── clean_data/student_data.csv   # Dataset  
-├── outputs/                      # Results (figures + stats)
-├── functions/ & gerryfair/       # Core code
-└── archive/                      # Old experiments (git ignored)
-```
+- `optimized_analysis.py` - Core analysis (10x faster)
+- `run_long_experiments.py` - Experiment runner
+- `generate_publication_figures.py` - Publication plots
+- `compare_algorithms.py` - Algorithm comparison
